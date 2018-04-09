@@ -8,6 +8,7 @@ public class fpsController : MonoBehaviour {
 	public float sensitivity = 2f;
 	public GameObject camera;
 	CharacterController player;
+	public bool shrunken = false;
 
 	//Keyboard movement
 	float moveFB;
@@ -41,6 +42,26 @@ public class fpsController : MonoBehaviour {
 		transform.Rotate (0, rotX, 0);
 		camera.transform.Rotate (-rotY, 0, 0);
 
+		//Shrinks player
+		if (Input.GetKeyDown (KeyCode.Space)) {
+			if (!shrunken)
+				shrink ();
+			else
+				grow ();
+		} 
+	}
 
+	public void shrink() {
+		player.radius = 0.25f;
+		player.height = 1.0f;
+		player.transform.localScale = new Vector3 (0.1f, 0.1f, 0.1f);
+		shrunken = true;
+	}
+
+	public void grow() {
+		player.radius = 0.5f;
+		player.height = 2.0f;
+		player.transform.localScale = new Vector3 (0.285f, 0.285f, 0.285f);
+		shrunken = false;
 	}
 }
