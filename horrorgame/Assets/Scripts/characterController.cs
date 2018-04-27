@@ -14,7 +14,13 @@ public class characterController : MonoBehaviour {
 	float rotY;
 
 	//shrinking and growing
-	public bool shrunken = false;
+	private float actualScale = 1.0f;
+	private float scaleDuration = 100;
+	private float timer = 0.0f;
+
+	private bool grown = true;
+	private bool shrunk = false;
+	private bool changing = false;
 
 	// Use this for initialization
 	void Start () {
@@ -45,25 +51,59 @@ public class characterController : MonoBehaviour {
 		if (Input.GetKeyDown ("escape"))
 			Cursor.lockState = CursorLockMode.None;
 
-		//Shrinks player
-		if (Input.GetKeyDown (KeyCode.Space)) {
-			if (!shrunken)
-				shrink ();
-			else
-				grow ();
-		} 
+		timer += Time.deltaTime;
+
+		//If we are grown and want to shrink
+		if (!grown && shrunk && changing)
+			shrink ();
+
+		//If we are shrunk and want to grow
+		if (!shrunk && grown && changing)
+			grow ();
+
+		//Set timer to 0 on spacebar and grow or shrink
+		if (Input.GetKeyDown (KeyCode.Space) && !(changing)) {
+
+			timer = 0;
+			if (grown) {
+				shrunk = true;
+				grown = false;
+				changing = true;
+			} 
+			else if (shrunk) {
+				grown = true;
+				shrunk = false;
+				changing = true;
+			}
+		}	
 	}
 
 	private void shrink() {
-		
-		player.transform.localScale = new Vector3 (0.1f, 0.1f, 0.1f);
 
-		print("scaling down");
-		shrunken = true;
+		//Done shrinking
+		if (actualScale < 0.1) {
+			actualScale = 0.1f;
+			changing = false;
+		} 
+		//Currently shrinking
+		else if (changing) {
+			player.transform.localScale = new Vector3 (actualScale, actualScale, actualScale);
+			actualScale = 1 - (timer / 100 * scaleDuration);
+		}
 	}
 
 	private void grow() {
-		player.transform.localScale = new Vector3 (1.0f, 1.0f, 1.0f);
-		shrunken = false;
+
+		//Done growing
+		if (actualScale > 1.0) {
+			actualScale = 1.0f;
+			changing = false;
+		} 
+
+		//Currently growing
+		else if (changing) {
+			player.transform.localScale = new Vector3 (actualScale, actualScale, actualScale);
+			actualScale = timer / 100 * scaleDuration;
+		}
 	}
 }

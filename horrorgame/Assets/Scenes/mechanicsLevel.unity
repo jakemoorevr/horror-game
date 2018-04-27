@@ -546,7 +546,6 @@ MonoBehaviour:
   sensitivity: 2
   camera: {fileID: 462530175}
   player: {fileID: 539219172}
-  shrunken: 0
 --- !u!1001 &729342937
 Prefab:
   m_ObjectHideFlags: 0
